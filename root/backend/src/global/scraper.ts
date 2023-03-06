@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { io } from '../server'
 
 export const scrape = async () => {
 	try {
@@ -33,35 +34,52 @@ export const scrape = async () => {
 }
 
 export default async function updateSymbolsJson() {
+	const currentDate = new Date().toISOString().slice(0, 10)
+
 	if (existsSync('symbols.json')) {
-		const rawJson = readFileSync('symbols.json')
-		const parsedJson = JSON.parse(rawJson.toString())
+		try {
+			const rawJson = readFileSync('symbols.json')
+			const parsedJson = JSON.parse(rawJson.toString())
 
-		const { date } = parsedJson
-		const currentDate = new Date().toISOString().slice(0, 10)
+			const { date } = parsedJson
 
-		if (currentDate > date || date === undefined) {
-			const symbolsArray = await scrape()
+			if (currentDate > date || date === undefined) {
+				const symbolsArray = await scrape()
 
-			parsedJson.date = currentDate
-			// Redundancy; if the scraper runs into an error, leave the symbols as is
-			parsedJson.symbols =
-				symbolsArray === undefined ? parsedJson.symbols : symbolsArray
+				parsedJson.date = currentDate
+				// Redundancy; if the scraper runs into an error, leave the symbols as is
+				parsedJson.symbols =
+					symbolsArray === undefined ? parsedJson.symbols : symbolsArray
 
-			// Serialize as JSON and write it to the file
-			writeFileSync('symbols.json', JSON.stringify(parsedJson, null, 2)) // formating
+				// Serialize as JSON and write it to the file
+				writeFileSync('symbols.json', JSON.stringify(parsedJson, null, 2)) // formating
+
+				io.emit(
+					'update-symbols',
+					JSON.parse(readFileSync('symbols.json').toString())
+				)
+			}
+		} catch (error) {
+			console.log(error)
 		}
 	} else {
-		const currentDate = new Date().toISOString().slice(0, 10)
+		try {
+			const symbolsArray = await scrape()
 
-		const symbolsArray = await scrape()
+			const json = {
+				date: currentDate,
+				symbols: symbolsArray === undefined ? [] : symbolsArray,
+			}
 
-		const json = {
-			date: currentDate,
-			symbols: symbolsArray === undefined ? [] : symbolsArray,
+			// Serialize as JSON and write it to the file
+			writeFileSync('symbols.json', JSON.stringify(json, null, 2)) // formating
+
+			io.emit(
+				'update-symbols',
+				JSON.parse(readFileSync('symbols.json').toString())
+			)
+		} catch (error) {
+			console.log(error)
 		}
-
-		// Serialize as JSON and write it to the file
-		writeFileSync('symbols.json', JSON.stringify(json, null, 2)) // formating
 	}
 }
