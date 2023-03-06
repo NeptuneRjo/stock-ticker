@@ -1,7 +1,7 @@
 import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
-import scrapeTopFifty from './global/scraper'
+import updateSymbolsJson from './global/scraper'
 
 import 'dotenv/config'
 
@@ -12,7 +12,7 @@ const server = http.createServer(app)
 const io = new Server(server)
 
 /* <-- MIDDLEWARE --> */
-scrapeTopFifty()
+updateSymbolsJson()
 
 /* <-- ROUTES --> */
 
@@ -29,3 +29,6 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
 	console.log(`Server sucessfully started and listening on port ${port}`)
 })
+
+// Export io to be used in other files
+export { io }
