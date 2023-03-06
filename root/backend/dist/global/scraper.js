@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.scrape = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const fs_1 = require("fs");
+const server_1 = require("../server");
 const scrape = async () => {
     try {
         const browser = await puppeteer_1.default.launch();
@@ -27,30 +28,41 @@ const scrape = async () => {
 };
 exports.scrape = scrape;
 async function updateSymbolsJson() {
+    const currentDate = new Date().toISOString().slice(0, 10);
     if ((0, fs_1.existsSync)('symbols.json')) {
-        const rawJson = (0, fs_1.readFileSync)('symbols.json');
-        const parsedJson = JSON.parse(rawJson.toString());
-        const { date } = parsedJson;
-        const currentDate = new Date().toISOString().slice(0, 10);
-        if (currentDate > date || date === undefined) {
-            const symbolsArray = await (0, exports.scrape)();
-            parsedJson.date = currentDate;
-            // Redundancy; if the scraper runs into an error, leave the symbols as is
-            parsedJson.symbols =
-                symbolsArray === undefined ? parsedJson.symbols : symbolsArray;
-            // Serialize as JSON and write it to the file
-            (0, fs_1.writeFileSync)('symbols.json', JSON.stringify(parsedJson, null, 2)); // formating
+        try {
+            const rawJson = (0, fs_1.readFileSync)('symbols.json');
+            const parsedJson = JSON.parse(rawJson.toString());
+            const { date } = parsedJson;
+            if (currentDate > date || date === undefined) {
+                const symbolsArray = await (0, exports.scrape)();
+                parsedJson.date = currentDate;
+                // Redundancy; if the scraper runs into an error, leave the symbols as is
+                parsedJson.symbols =
+                    symbolsArray === undefined ? parsedJson.symbols : symbolsArray;
+                // Serialize as JSON and write it to the file
+                (0, fs_1.writeFileSync)('symbols.json', JSON.stringify(parsedJson, null, 2)); // formating
+                server_1.io.emit('update-symbols', JSON.parse((0, fs_1.readFileSync)('symbols.json').toString()));
+            }
+        }
+        catch (error) {
+            console.log(error);
         }
     }
     else {
-        const currentDate = new Date().toISOString().slice(0, 10);
-        const symbolsArray = await (0, exports.scrape)();
-        const json = {
-            date: currentDate,
-            symbols: symbolsArray === undefined ? [] : symbolsArray,
-        };
-        // Serialize as JSON and write it to the file
-        (0, fs_1.writeFileSync)('symbols.json', JSON.stringify(json, null, 2)); // formating
+        try {
+            const symbolsArray = await (0, exports.scrape)();
+            const json = {
+                date: currentDate,
+                symbols: symbolsArray === undefined ? [] : symbolsArray,
+            };
+            // Serialize as JSON and write it to the file
+            (0, fs_1.writeFileSync)('symbols.json', JSON.stringify(json, null, 2)); // formating
+            server_1.io.emit('update-symbols', JSON.parse((0, fs_1.readFileSync)('symbols.json').toString()));
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 }
 exports.default = updateSymbolsJson;
