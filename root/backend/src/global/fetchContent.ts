@@ -69,7 +69,7 @@ export default async function fetchContent() {
 
 			if (data.length > 0) {
 				// Emit the data to users already connected
-				io.emit('content', { data })
+				io.emit('update-content', { data })
 
 				// Cache the data for users that connect in between fetch
 				// periods
