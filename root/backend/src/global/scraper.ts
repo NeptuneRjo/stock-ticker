@@ -20,13 +20,13 @@ export const scrape = async () => {
 			)
 		)
 
-		if (symbolsArray.length < 50) {
+		if (symbolsArray.length < 5) {
 			throw Error(
-				'The returned length of the symbols is less that 50, skipping JSON overwrite'
+				'The returned length of the symbols is less than 5, skipping JSON overwrite'
 			)
 		}
 
-		return symbolsArray
+		return symbolsArray.slice(0, 5)
 	} catch (error) {
 		console.log('Scrape Error: ', error)
 		return undefined
