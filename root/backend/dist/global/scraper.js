@@ -16,10 +16,10 @@ const scrape = async () => {
         await page.setViewport({ width: 1920, height: 1080 });
         // Gets the 50 symbols and stores them as an array
         const symbolsArray = await page.evaluate(() => Array.from(document.querySelectorAll('div#scr-res-table div table tbody tr td a'), (element) => element.textContent));
-        if (symbolsArray.length < 50) {
-            throw Error('The returned length of the symbols is less that 50, skipping JSON overwrite');
+        if (symbolsArray.length < 5) {
+            throw Error('The returned length of the symbols is less than 5, skipping JSON overwrite');
         }
-        return symbolsArray;
+        return symbolsArray.slice(0, 5);
     }
     catch (error) {
         console.log('Scrape Error: ', error);
