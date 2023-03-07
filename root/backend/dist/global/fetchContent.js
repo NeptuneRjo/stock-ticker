@@ -67,7 +67,7 @@ async function fetchContent() {
             }
             if (data.length > 0) {
                 // Emit the data to users already connected
-                server_1.io.emit('content', { data });
+                server_1.io.emit('update-content', { data });
                 // Cache the data for users that connect in between fetch
                 // periods
                 memory_cache_1.default.put('content', { data });
