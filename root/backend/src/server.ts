@@ -2,10 +2,11 @@ import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import updateSymbolsJson from './global/scraper'
+import fetchContent from './global/fetchContent'
+import cron from 'node-cron'
+import cache from 'memory-cache'
 
 import 'dotenv/config'
-
-import axios from 'axios'
 
 const app = express()
 const server = http.createServer(app)
@@ -14,12 +15,22 @@ const io = new Server(server)
 /* <-- MIDDLEWARE --> */
 updateSymbolsJson()
 
+// Fetch the content every 2 minutes
+cron.schedule('*/2 * * * *', () => {
+	fetchContent()
+})
+
 /* <-- ROUTES --> */
 
 const port = 8000 || process.env.PORT
 
 io.on('connection', (socket) => {
 	console.log('A user has connected')
+	const content = cache.get('content')
+
+	if (content !== null) {
+		socket.emit('content', content)
+	}
 
 	socket.on('disconnect', () => {
 		console.log('user disconnected')
