@@ -11,12 +11,20 @@ const scraper_1 = __importDefault(require("./global/scraper"));
 const fetchContent_1 = __importDefault(require("./global/fetchContent"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const memory_cache_1 = __importDefault(require("memory-cache"));
+const cors_1 = __importDefault(require("cors"));
 require("dotenv/config");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
-const io = new socket_io_1.Server(server);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: ['http://localhost:3000'],
+    },
+});
 exports.io = io;
 /* <-- MIDDLEWARE --> */
+app.use((0, cors_1.default)({
+    origin: ['http://localhost:3000'],
+}));
 (0, scraper_1.default)();
 // Fetch the content every 2 minutes
 node_cron_1.default.schedule('*/2 * * * *', () => {
