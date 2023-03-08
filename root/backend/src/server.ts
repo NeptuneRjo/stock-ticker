@@ -5,14 +5,25 @@ import updateSymbolsJson from './global/scraper'
 import fetchContent from './global/fetchContent'
 import cron from 'node-cron'
 import cache from 'memory-cache'
+import cors from 'cors'
 
 import 'dotenv/config'
 
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+	cors: {
+		origin: ['http://localhost:3000'],
+	},
+})
 
 /* <-- MIDDLEWARE --> */
+app.use(
+	cors({
+		origin: ['http://localhost:3000'],
+	})
+)
+
 updateSymbolsJson()
 
 // Fetch the content every 2 minutes

@@ -15,13 +15,24 @@ export function getLastFridayOf(date: string) {
 
 	return d.getTime()
 }
+/**
+ * Retrieves the stock information for the given date;
+ * If date2 is included, that will be the start date for the retrieval
+ *
+ */
 
-export async function getStock(date: string, symbol: string) {
+export async function getStock(
+	date: string,
+	symbol: string,
+	date2: string | undefined = undefined
+) {
 	const API_KEY = process.env.API_KEY
 
 	try {
 		const res = await axios.get(
-			`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/5/minute/${date}/${date}?adjusted=true&sort=desc&limit=120&apiKey=${API_KEY}`
+			`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/2/minute/${
+				date2 ? date2 : date
+			}/${date}?adjusted=true&sort=desc&limit=120&apiKey=${API_KEY}`
 		)
 		const { ticker, resultsCount, results } = res.data
 
@@ -37,6 +48,8 @@ export default async function fetchContent() {
 		.toISOString()
 		.slice(0, 10)
 	const currentDayNumber = new Date().getDate()
+	const yesterday = new Date()
+	yesterday.setDate(currentDayNumber - 1)
 
 	if (existsSync('symbols.json')) {
 		try {
@@ -59,7 +72,11 @@ export default async function fetchContent() {
 			} else {
 				for (let i = 0; i < symbols.length; i++) {
 					try {
-						const res = await getStock(currentDate, symbols[i])
+						const res = await getStock(
+							currentDate,
+							symbols[i],
+							yesterday.toISOString().slice(0, 10)
+						)
 						data.push(res)
 					} catch (error) {
 						throw Error(error as string)
