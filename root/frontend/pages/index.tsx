@@ -4,23 +4,10 @@ import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import io, { Socket } from 'socket.io-client'
 import { useState, useEffect, use } from 'react'
+import { StockInterface } from '@/types'
+import Stock from '@/components/Stock'
 
 const inter = Inter({ subsets: ['latin'] })
-
-interface Stock {
-	ticker: string
-	resultsCount: number
-	results: {
-		c: number
-		h: number
-		l: number
-		n: number
-		o: number
-		t: number
-		v: number
-		vw: number
-	}[]
-}
 
 export const useSocket = (url: string) => {
 	const [socket, setSocket] = useState<Socket | null>(null)
@@ -49,7 +36,7 @@ export default function Home() {
 
 	const socket = useSocket(`${API_URL}`)
 
-	const [stocks, setStocks] = useState<Stock[]>([])
+	const [stocks, setStocks] = useState<StockInterface[]>([])
 
 	useEffect(() => {
 		if (socket) {
@@ -86,6 +73,11 @@ export default function Home() {
 					Displays the High, Low, and Close prices of the 5 most popular stocks
 					for the current or last trade day.
 				</p>
+			</div>
+			<div>
+				{stocks.map((stock, key) => (
+					<Stock stock={stock} key={key} />
+				))}
 			</div>
 		</>
 	)
