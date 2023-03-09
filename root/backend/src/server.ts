@@ -11,6 +11,9 @@ import 'dotenv/config'
 
 const app = express()
 const server = http.createServer(app)
+
+const content = cache.get('content')
+
 const io = new Server(server, {
 	cors: {
 		origin: ['http://localhost:3000'],
@@ -26,22 +29,31 @@ app.use(
 
 updateSymbolsJson()
 
+// Initialize the data on server startup
+if (content === null) {
+	fetchContent()
+}
+
 // Fetch the content every 2 minutes
-cron.schedule('*/2 * * * *', () => {
+const scheduledFetch = cron.schedule('*/2 * * * *', () => {
 	fetchContent()
 })
+
+// Start the 2 minute schedule
+scheduledFetch.start()
 
 /* <-- ROUTES --> */
 
 const port = 8000 || process.env.PORT
 
 io.on('connection', (socket) => {
-	console.log('A user has connected')
-	const content = cache.get('content')
+	socket.on('initialize', () => {
+		const content = cache.get('content')
 
-	if (content !== null) {
-		socket.emit('content', content)
-	}
+		if (content !== null) {
+			socket.volatile.emit('content', { data: content })
+		}
+	})
 
 	socket.on('disconnect', () => {
 		console.log('user disconnected')
