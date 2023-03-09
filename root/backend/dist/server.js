@@ -15,6 +15,7 @@ const cors_1 = __importDefault(require("cors"));
 require("dotenv/config");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
+const content = memory_cache_1.default.get('content');
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: ['http://localhost:3000'],
@@ -26,18 +27,25 @@ app.use((0, cors_1.default)({
     origin: ['http://localhost:3000'],
 }));
 (0, scraper_1.default)();
+// Initialize the data on server startup
+if (content === null) {
+    (0, fetchContent_1.default)();
+}
 // Fetch the content every 2 minutes
-node_cron_1.default.schedule('*/2 * * * *', () => {
+const scheduledFetch = node_cron_1.default.schedule('*/2 * * * *', () => {
     (0, fetchContent_1.default)();
 });
+// Start the 2 minute schedule
+scheduledFetch.start();
 /* <-- ROUTES --> */
 const port = 8000 || process.env.PORT;
 io.on('connection', (socket) => {
-    console.log('A user has connected');
-    const content = memory_cache_1.default.get('content');
-    if (content !== null) {
-        socket.emit('content', content);
-    }
+    socket.on('initialize', () => {
+        const content = memory_cache_1.default.get('content');
+        if (content !== null) {
+            socket.volatile.emit('content', { data: content });
+        }
+    });
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
