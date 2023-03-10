@@ -34,7 +34,11 @@ export const scrape = async () => {
 }
 
 export default async function updateSymbolsJson() {
-	const currentDate = new Date().toISOString().slice(0, 10)
+	const date = new Date()
+	let offset = -300 //Timezone offset for EST in minutes.
+	let estDate = new Date(date.getTime() + offset * 60 * 1000)
+		.toISOString()
+		.slice(0, 10)
 
 	if (existsSync('symbols.json')) {
 		try {
@@ -43,10 +47,10 @@ export default async function updateSymbolsJson() {
 
 			const { date } = parsedJson
 
-			if (currentDate > date || date === undefined) {
+			if (estDate > date || date === undefined) {
 				const symbolsArray = await scrape()
 
-				parsedJson.date = currentDate
+				parsedJson.date = estDate
 				// Redundancy; if the scraper runs into an error, leave the symbols as is
 				parsedJson.symbols =
 					symbolsArray === undefined ? parsedJson.symbols : symbolsArray
@@ -67,7 +71,7 @@ export default async function updateSymbolsJson() {
 			const symbolsArray = await scrape()
 
 			const json = {
-				date: currentDate,
+				date: estDate,
 				symbols: symbolsArray === undefined ? [] : symbolsArray,
 			}
 
