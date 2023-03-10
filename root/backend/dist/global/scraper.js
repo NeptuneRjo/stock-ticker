@@ -28,15 +28,19 @@ const scrape = async () => {
 };
 exports.scrape = scrape;
 async function updateSymbolsJson() {
-    const currentDate = new Date().toISOString().slice(0, 10);
+    const date = new Date();
+    let offset = -300; //Timezone offset for EST in minutes.
+    let estDate = new Date(date.getTime() + offset * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
     if ((0, fs_1.existsSync)('symbols.json')) {
         try {
             const rawJson = (0, fs_1.readFileSync)('symbols.json');
             const parsedJson = JSON.parse(rawJson.toString());
             const { date } = parsedJson;
-            if (currentDate > date || date === undefined) {
+            if (estDate > date || date === undefined) {
                 const symbolsArray = await (0, exports.scrape)();
-                parsedJson.date = currentDate;
+                parsedJson.date = estDate;
                 // Redundancy; if the scraper runs into an error, leave the symbols as is
                 parsedJson.symbols =
                     symbolsArray === undefined ? parsedJson.symbols : symbolsArray;
@@ -53,7 +57,7 @@ async function updateSymbolsJson() {
         try {
             const symbolsArray = await (0, exports.scrape)();
             const json = {
-                date: currentDate,
+                date: estDate,
                 symbols: symbolsArray === undefined ? [] : symbolsArray,
             };
             // Serialize as JSON and write it to the file

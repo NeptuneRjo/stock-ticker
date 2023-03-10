@@ -37,20 +37,21 @@ async function getStock(date, symbol, date2 = undefined) {
 }
 exports.getStock = getStock;
 async function fetchContent() {
-    const currentDate = new Date().toISOString().slice(0, 10);
-    const lastFriday = new Date(getLastFridayOf(currentDate))
+    const date = new Date();
+    let estDate = new Date(date.getTime() + -300 * 60 * 1000); // the date in EST
+    let estDateString = estDate.toISOString().slice(0, 10);
+    const lastFriday = new Date(getLastFridayOf(estDateString))
         .toISOString()
         .slice(0, 10);
-    const currentDayNumber = new Date().getDate();
-    const yesterday = new Date();
-    yesterday.setDate(currentDayNumber - 1);
+    const yesterday = new Date(date.getTime() + -300 * 60 * 1000);
+    yesterday.setDate(estDate.getDate() - 1);
     if ((0, fs_1.existsSync)('symbols.json')) {
         try {
             const rawJson = (0, fs_1.readFileSync)('symbols.json');
             const parsedJson = JSON.parse(rawJson.toString());
             const { symbols } = parsedJson;
             let data = [];
-            if (currentDayNumber === (6 || 7)) {
+            if (estDate.getDate() === (6 || 7)) {
                 for (let i = 0; i < symbols.length; i++) {
                     try {
                         const res = await getStock(lastFriday, symbols[i]);
@@ -64,7 +65,7 @@ async function fetchContent() {
             else {
                 for (let i = 0; i < symbols.length; i++) {
                     try {
-                        const res = await getStock(currentDate, symbols[i], yesterday.toISOString().slice(0, 10));
+                        const res = await getStock(estDateString, symbols[i], yesterday.toISOString().slice(0, 10));
                         data.push(res);
                     }
                     catch (error) {
