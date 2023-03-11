@@ -1,11 +1,14 @@
 import Link from 'next/link'
+import styles from '@/styles/Footer.module.css'
 
 const Footer = () => {
 	return (
-		<footer>
+		<footer className={styles.footer}>
 			<p>
 				Copyright 2023{' '}
-				<Link href='https://github.com/neptunerjo'>NeptuneRjo</Link>
+				<Link className={styles.link} href='https://github.com/neptunerjo'>
+					NeptuneRjo
+				</Link>
 			</p>
 		</footer>
 	)

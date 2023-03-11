@@ -1,8 +1,15 @@
+import Head from 'next/head'
+import styles from '@/styles/About.module.css'
+
 const About = () => {
 	return (
 		<>
-			<div>
-				<h3>About Stock Ticker</h3>
+			<Head>
+				<title>Stock Ticker | About</title>
+				<meta name='keywords' content='stocks' />
+			</Head>
+			<div className={styles.section}>
+				<h4 className={styles.title}>About Stock Ticker</h4>
 				<p>
 					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit
 					suscipit harum dolorum tempora, animi esse velit, iusto debitis illum
@@ -13,8 +20,8 @@ const About = () => {
 					incidunt quasi quaerat sapiente dicta autem!
 				</p>
 			</div>
-			<div>
-				<h4>Our Mission</h4>
+			<div className={styles.section}>
+				<h4 className={styles.title}>Our Mission</h4>
 				<p>
 					Lorem ipsum dolor sit, amet consectetur adipisicing elit. Possimus
 					doloremque praesentium saepe deserunt hic quod neque, dignissimos,
@@ -22,8 +29,8 @@ const About = () => {
 					laborum ipsam sed.
 				</p>
 			</div>
-			<div>
-				<h4>Something Else</h4>
+			<div className={styles.section}>
+				<h4 className={styles.title}>Something Else</h4>
 				<p>
 					Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque aliquam
 					inventore cum ad maxime totam magni iure, odit itaque. Magnam tenetur

@@ -66,15 +66,18 @@ export default function Home() {
 				<title>Stock Ticker | Home</title>
 				<meta name='keywords' content='stocks' />
 			</Head>
-			<div>
-				<h1>Home</h1>
-				<p>Stock prices are updated regularly, every 2 minutes.</p>
+			<div className={styles.hero}>
+				<h1 className={styles.title}>Home</h1>
 				<p>
 					Displays the High, Low, and Close prices of the 5 most popular stocks
-					for the current or last trade day.
+					for the current or last trade day. <br />
+					<span className={styles.small}>
+						Stock prices are updated regularly, every 2 minutes.
+					</span>
 				</p>
 			</div>
-			<div>
+			<div className={styles.grid}>
+				<h3>Today's Top 5</h3>
 				{stocks.map((stock, key) => (
 					<Stock stock={stock} key={key} />
 				))}
