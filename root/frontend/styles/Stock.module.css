@@ -1,0 +1,17 @@
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.select {
+    background-color: var(--primary);
+    border: solid 1px var(--primary);
+    padding: 8px;
+    color: var(--contrast);
+}

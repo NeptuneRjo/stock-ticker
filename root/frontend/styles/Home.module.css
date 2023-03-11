@@ -1,0 +1,25 @@
+.hero {
+    display: flex;
+    flex-direction: column;
+    margin: var(--spacer);
+    margin-bottom: var(--spacer-lg);
+}
+
+.title {
+    background: var(--gradient-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacer-lg);
+    margin: var(--spacer);
+}
+
+.small {
+    font-size: var(--fs-s);
+    font-style: italic;
+}

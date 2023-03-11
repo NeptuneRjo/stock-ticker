@@ -1,0 +1,12 @@
+.section {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-md);
+}
+
+.title {
+    background: var(--gradient-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

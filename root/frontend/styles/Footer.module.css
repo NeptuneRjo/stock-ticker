@@ -1,0 +1,16 @@
+.footer {
+    margin: var(--spacer-lg) 0;
+    margin-bottom: 0;
+    padding: var(--spacer);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.link {
+    color: var(--secondary);
+}
+
+.link:visited {
+    color: var(--secondary);
+}
