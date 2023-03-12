@@ -26,7 +26,13 @@ exports.io = io;
 app.use((0, cors_1.default)({
     origin: ['http://localhost:3000'],
 }));
-(0, scraper_1.default)();
+// Run job at 12:00 at EST time
+node_cron_1.default.schedule('0 12 * * *', () => {
+    (0, scraper_1.default)();
+}, {
+    scheduled: true,
+    timezone: 'US/Eastern',
+});
 // Initialize the data on server startup
 if (content === null) {
     (0, fetchContent_1.default)();

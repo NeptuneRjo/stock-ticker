@@ -51,7 +51,7 @@ async function fetchContent() {
             const parsedJson = JSON.parse(rawJson.toString());
             const { symbols } = parsedJson;
             let data = [];
-            if (estDate.getDate() === (6 || 7)) {
+            if (estDate.getDay() === 0 || estDate.getDay() === 6) {
                 for (let i = 0; i < symbols.length; i++) {
                     try {
                         const res = await getStock(lastFriday, symbols[i]);

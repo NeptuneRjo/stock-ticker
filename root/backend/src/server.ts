@@ -27,7 +27,17 @@ app.use(
 	})
 )
 
-updateSymbolsJson()
+// Run job at 12:00 at EST time
+cron.schedule(
+	'0 12 * * *',
+	() => {
+		updateSymbolsJson()
+	},
+	{
+		scheduled: true,
+		timezone: 'US/Eastern',
+	}
+)
 
 // Initialize the data on server startup
 if (content === null) {
