@@ -72,6 +72,15 @@ export default async function fetchContent() {
 						throw Error(error as string)
 					}
 				}
+			} else if (estDate.getDay() === 1) {
+				for (let i = 0; i < symbols.length; i++) {
+					try {
+						const res = await getStock(estDateString, symbols[i], lastFriday)
+						data.push(res)
+					} catch (error) {
+						throw Error(error as string)
+					}
+				}
 			} else {
 				for (let i = 0; i < symbols.length; i++) {
 					try {
