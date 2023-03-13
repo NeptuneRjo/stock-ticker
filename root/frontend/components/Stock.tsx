@@ -67,7 +67,11 @@ const Stock = ({ stock }: { stock: StockInterface }) => {
 
 	return (
 		<div className={styles.main}>
-			<Line datasetIdKey='stock-price-history' data={data} />
+			<Line
+				className={styles.graph}
+				datasetIdKey='stock-price-history'
+				data={data}
+			/>
 			<div className={styles.content}>
 				<h4>{stock.ticker}</h4>
 				<h5>${stock.results[0].c} - Current Price</h5>
