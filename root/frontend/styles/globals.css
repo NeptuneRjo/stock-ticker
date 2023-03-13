@@ -49,6 +49,7 @@ h1, h2, h3, h4, h5, h6 {
 p {
     line-height: 42px;
     max-width: 52ch;
+    font-size: var(--fs-s);
 }
 
 h1 {
@@ -63,6 +64,14 @@ h4 {
     font-size: var(--fs-m);
 }
 
+h5 {
+    font-size: var(--fs-n);
+}
+
+a {
+    font-size: var(--fs-s);
+}
+
 
 @media only screen and (min-width: 600px) {
     :root {
@@ -72,11 +81,12 @@ h4 {
 
 @media only screen and (min-width: 768px) {
     :root {
-         /* Font-size */
-        --fs-2: 3.5rem;
-        --fs-3: 3rem;
-        --fs-4: 2.35rem;
-        --fs-p: 1.1rem;
+        /* Font-size */
+        --fs-xl: 4.5em;
+        --fs-l: 3.5em;
+        --fs-m: 2.5em;
+        --fs-n: 1.5em;
+        --fs-s: 1em;
     }
 }
 
@@ -91,10 +101,16 @@ h4 {
         --spacer: 2.25rem;
 
         /* Font-size */
-        --fs-2: 3.75rem;
-        --fs-3: 3.25rem;
-        --fs-4: 2.5rem;
-        --fs-p: 1.2rem;
+        --fs-xl: 4.75em;
+        --fs-l: 3.75em;
+        --fs-m: 2.75em;
+        --fs-n: 1.75em;
+        --fs-s: 1.2em;
+    }
+
+    p {
+        max-width: 64ch;
+
     }
 }
 
@@ -102,10 +118,10 @@ h4 {
     :root {
         --spacer: 5rem;
 
-        --fs-p: 1.5rem;
+        --fs-s: 1.5rem;
     }
 
     p {
-        max-width: 58ch;
+        max-width: 64ch;
     }
 }

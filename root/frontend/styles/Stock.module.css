@@ -14,4 +14,13 @@
     border: solid 1px var(--primary);
     padding: 8px;
     color: var(--contrast);
+    font-weight: var(--fw-b);
+}
+
+
+@media only screen and (min-width: 1600px) {
+    .main {
+        flex-direction: column-reverse;
+        width: 90%;
+    }
 }
