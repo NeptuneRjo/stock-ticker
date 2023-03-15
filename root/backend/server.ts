@@ -1,8 +1,8 @@
 import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
-import updateSymbolsJson from './global/scraper'
-import fetchContent from './global/fetchContent'
+import { scrapeAndUpdate } from './global/scraper'
+import { fetchContent } from './global/api'
 import cron from 'node-cron'
 import cache from 'memory-cache'
 import cors from 'cors'
@@ -28,29 +28,30 @@ app.use(
 )
 
 // Run job at 12:00 at EST time
-cron.schedule(
+const scheduledScrape = cron.schedule(
 	'0 12 * * *',
 	() => {
-		updateSymbolsJson()
+		scrapeAndUpdate()
 	},
 	{
-		scheduled: true,
 		timezone: 'US/Eastern',
 	}
 )
 
 // Initialize the data on server startup
 if (content === null) {
-	fetchContent()
+	fetchContent(io)
 }
 
 // Fetch the content every 2 minutes
 const scheduledFetch = cron.schedule('*/2 * * * *', () => {
-	fetchContent()
+	fetchContent(io)
 })
 
 // Start the 2 minute schedule
 scheduledFetch.start()
+
+scheduledScrape.start()
 
 /* <-- ROUTES --> */
 
