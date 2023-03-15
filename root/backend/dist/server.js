@@ -7,8 +7,8 @@ exports.io = void 0;
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
-const scraper_1 = __importDefault(require("./global/scraper"));
-const fetchContent_1 = __importDefault(require("./global/fetchContent"));
+const scraper_1 = require("./global/scraper");
+const api_1 = require("./global/api");
 const node_cron_1 = __importDefault(require("node-cron"));
 const memory_cache_1 = __importDefault(require("memory-cache"));
 const cors_1 = __importDefault(require("cors"));
@@ -27,22 +27,22 @@ app.use((0, cors_1.default)({
     origin: ['http://localhost:3000'],
 }));
 // Run job at 12:00 at EST time
-node_cron_1.default.schedule('0 12 * * *', () => {
-    (0, scraper_1.default)();
+const scheduledScrape = node_cron_1.default.schedule('0 12 * * *', () => {
+    (0, scraper_1.scrapeAndUpdate)();
 }, {
-    scheduled: true,
     timezone: 'US/Eastern',
 });
 // Initialize the data on server startup
 if (content === null) {
-    (0, fetchContent_1.default)();
+    (0, api_1.fetchContent)(io);
 }
 // Fetch the content every 2 minutes
 const scheduledFetch = node_cron_1.default.schedule('*/2 * * * *', () => {
-    (0, fetchContent_1.default)();
+    (0, api_1.fetchContent)(io);
 });
 // Start the 2 minute schedule
 scheduledFetch.start();
+scheduledScrape.start();
 /* <-- ROUTES --> */
 const port = 8000 || process.env.PORT;
 io.on('connection', (socket) => {

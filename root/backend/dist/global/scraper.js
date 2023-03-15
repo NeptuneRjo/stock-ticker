@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.scrape = void 0;
+exports.scrapeAndUpdate = exports.scrape = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const fs_1 = require("fs");
 const server_1 = require("../server");
+const util_1 = require("./util");
 const scrape = async () => {
     try {
         const browser = await puppeteer_1.default.launch();
@@ -27,46 +27,22 @@ const scrape = async () => {
     }
 };
 exports.scrape = scrape;
-async function updateSymbolsJson() {
-    const date = new Date();
-    let offset = -300; //Timezone offset for EST in minutes.
-    let estDate = new Date(date.getTime() + offset * 60 * 1000)
-        .toISOString()
-        .slice(0, 10);
-    if ((0, fs_1.existsSync)('symbols.json')) {
-        try {
-            const rawJson = (0, fs_1.readFileSync)('symbols.json');
-            const parsedJson = JSON.parse(rawJson.toString());
-            const { date } = parsedJson;
-            if (estDate > date || date === undefined) {
-                const symbolsArray = await (0, exports.scrape)();
-                parsedJson.date = estDate;
-                // Redundancy; if the scraper runs into an error, leave the symbols as is
-                parsedJson.symbols =
-                    symbolsArray === undefined ? parsedJson.symbols : symbolsArray;
-                // Serialize as JSON and write it to the file
-                (0, fs_1.writeFileSync)('symbols.json', JSON.stringify(parsedJson, null, 2)); // formating
-                server_1.io.emit('update-symbols', JSON.parse((0, fs_1.readFileSync)('symbols.json').toString()));
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
+const scrapeAndUpdate = async () => {
+    try {
+        const filePath = './data/symbols.json';
+        const estDate = await (0, util_1.getEstDate)();
+        const symbolsArray = await (0, exports.scrape)();
+        const jsonData = await (0, util_1.readJsonFile)(filePath);
+        jsonData.date = estDate;
+        // Keep the symbols the same if none are returned from the scrape
+        jsonData.symbols =
+            symbolsArray === undefined ? jsonData.symbols : symbolsArray;
+        await (0, util_1.writeJsonFile)(filePath, jsonData);
+        const updatedJson = await (0, util_1.readJsonFile)(filePath);
+        server_1.io.emit('update-symbols', updatedJson);
     }
-    else {
-        try {
-            const symbolsArray = await (0, exports.scrape)();
-            const json = {
-                date: estDate,
-                symbols: symbolsArray === undefined ? [] : symbolsArray,
-            };
-            // Serialize as JSON and write it to the file
-            (0, fs_1.writeFileSync)('symbols.json', JSON.stringify(json, null, 2)); // formating
-            server_1.io.emit('update-symbols', JSON.parse((0, fs_1.readFileSync)('symbols.json').toString()));
-        }
-        catch (error) {
-            console.log(error);
-        }
+    catch (error) {
+        console.log(error);
     }
-}
-exports.default = updateSymbolsJson;
+};
+exports.scrapeAndUpdate = scrapeAndUpdate;
