@@ -66,13 +66,14 @@ const Stock = ({ stock }: { stock: StockInterface }) => {
 	}
 
 	return (
-		<div className={styles.main}>
+		<div className={styles.main} data-cy='stock-main'>
 			<Line
 				className={styles.graph}
 				datasetIdKey='stock-price-history'
 				data={data}
+				data-cy='stock-graph'
 			/>
-			<div className={styles.content}>
+			<div className={styles.content} data-cy='stock-content'>
 				<h4>{stock.ticker}</h4>
 				<h5>${stock.results[0].c} - Current Price</h5>
 				<select
@@ -80,9 +81,12 @@ const Stock = ({ stock }: { stock: StockInterface }) => {
 					className={styles.select}
 					value={priceSelector}
 					onChange={(e) => setPriceSelector(e.target.value)}
+					data-cy='stock-select'
 				>
 					{price.map((price) => (
-						<option value={price.value}>{price.text}</option>
+						<option value={price.value} data-cy='stock-option'>
+							{price.text}
+						</option>
 					))}
 				</select>
 			</div>
