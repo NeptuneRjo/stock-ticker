@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
-import axios from 'axios'
 
+/** Returns the current date in Eastern-Standard-Time */
 export const getEstDate = async () => {
 	const date = new Date()
 	let offset = -300 // Timezone offset for EST in minutes.
@@ -11,7 +11,8 @@ export const getEstDate = async () => {
 	return estDate
 }
 
-export const readJsonFile = async (path: string) => {
+/** Returns the parsed json of the given JSON file; returns null if there is an error */
+export const readJsonFile = async (path: string): Promise<null | any> => {
 	try {
 		const rawJson = readFileSync(path)
 		const parsedJson = JSON.parse(rawJson.toString())
@@ -22,6 +23,7 @@ export const readJsonFile = async (path: string) => {
 	}
 }
 
+/** Writes to the given JSON file */
 export const writeJsonFile = async (path: string, jsonData: object) => {
 	try {
 		// Serialize as JSON and write it to the file
@@ -31,6 +33,7 @@ export const writeJsonFile = async (path: string, jsonData: object) => {
 	}
 }
 
+/** Returns the date string of the last friday of the given date string; YYYY-MM-DD */
 export const getLastFridayOf = async (date: string) => {
 	let d = new Date(date)
 	let day = d.getDay()
@@ -46,6 +49,7 @@ export const getLastFridayOf = async (date: string) => {
 	return lastFriday
 }
 
+/** Returns the date string of yesterday; YYYY-MM-DD  */
 export const getYesterday = async (date: string) => {
 	// sets the date-time to date-00:00:00
 	const d = new Date(date)
