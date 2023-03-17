@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getYesterday = exports.getLastFridayOf = exports.writeJsonFile = exports.readJsonFile = exports.getEstDate = void 0;
 const fs_1 = require("fs");
+/** Returns the current date in Eastern-Standard-Time */
 const getEstDate = async () => {
     const date = new Date();
     let offset = -300; // Timezone offset for EST in minutes.
@@ -11,6 +12,7 @@ const getEstDate = async () => {
     return estDate;
 };
 exports.getEstDate = getEstDate;
+/** Returns the parsed json of the given JSON file; returns null if there is an error */
 const readJsonFile = async (path) => {
     try {
         const rawJson = (0, fs_1.readFileSync)(path);
@@ -23,6 +25,7 @@ const readJsonFile = async (path) => {
     }
 };
 exports.readJsonFile = readJsonFile;
+/** Writes to the given JSON file */
 const writeJsonFile = async (path, jsonData) => {
     try {
         // Serialize as JSON and write it to the file
@@ -33,6 +36,7 @@ const writeJsonFile = async (path, jsonData) => {
     }
 };
 exports.writeJsonFile = writeJsonFile;
+/** Returns the date string of the last friday of the given date string; YYYY-MM-DD */
 const getLastFridayOf = async (date) => {
     let d = new Date(date);
     let day = d.getDay();
@@ -45,6 +49,7 @@ const getLastFridayOf = async (date) => {
     return lastFriday;
 };
 exports.getLastFridayOf = getLastFridayOf;
+/** Returns the date string of yesterday; YYYY-MM-DD  */
 const getYesterday = async (date) => {
     // sets the date-time to date-00:00:00
     const d = new Date(date);
