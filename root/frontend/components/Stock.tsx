@@ -83,8 +83,8 @@ const Stock = ({ stock }: { stock: StockInterface }) => {
 					onChange={(e) => setPriceSelector(e.target.value)}
 					data-cy='stock-select'
 				>
-					{price.map((price) => (
-						<option value={price.value} data-cy='stock-option'>
+					{price.map((price, key) => (
+						<option value={price.value} data-cy='stock-option' key={key}>
 							{price.text}
 						</option>
 					))}

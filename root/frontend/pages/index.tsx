@@ -78,10 +78,10 @@ export default function Home() {
 			</div>
 
 			<div className={styles.content}>
-				<h3>Today's Top 5</h3>
+				<h3>{`Today's Top 5`}</h3>
 				<div className={styles.grid}>
-					{stocks.map((stock, key) => (
-						<Stock stock={stock} key={key} />
+					{stocks.map((stock, index) => (
+						<Stock stock={stock} key={index} />
 					))}
 				</div>
 			</div>
