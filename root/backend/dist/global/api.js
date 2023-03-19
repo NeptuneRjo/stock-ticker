@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchContent = exports.getData = exports.getStock = void 0;
 const axios_1 = __importDefault(require("axios"));
-const fs_1 = require("fs");
 const memory_cache_1 = __importDefault(require("memory-cache"));
 const util_1 = require("./util");
 /**
@@ -44,41 +43,34 @@ const fetchContent = async (io) => {
     const day = new Date(date).getDay();
     const lastFriday = await (0, util_1.getLastFridayOf)(date);
     const yesterday = await (0, util_1.getYesterday)(date);
-    if ((0, fs_1.existsSync)('./data/symbols.json')) {
-        try {
-            const rawJson = (0, fs_1.readFileSync)('./data/symbols.json');
-            const parsedJson = JSON.parse(rawJson.toString());
-            const { symbols } = parsedJson;
-            let data = [];
-            switch (day) {
-                case 0:
-                case 6: {
-                    data = await (0, exports.getData)(lastFriday, symbols);
-                    break;
-                }
-                case 1: {
-                    data = await (0, exports.getData)(date, symbols, lastFriday);
-                    break;
-                }
-                default: {
-                    data = await (0, exports.getData)(date, symbols, yesterday);
-                    break;
-                }
+    try {
+        const symbols = ['TSLA', 'BAC', 'AMD', 'F', 'SWN'];
+        let data = [];
+        switch (day) {
+            case 0:
+            case 6: {
+                data = await (0, exports.getData)(lastFriday, symbols);
+                break;
             }
-            if (data.length > 0) {
-                // Emit the data to users already connected
-                io.emit('update-content', { data });
-                // Cache the data for users that connect in between fetch
-                // periods
-                memory_cache_1.default.put('content', { data });
+            case 1: {
+                data = await (0, exports.getData)(date, symbols, lastFriday);
+                break;
+            }
+            default: {
+                data = await (0, exports.getData)(date, symbols, yesterday);
+                break;
             }
         }
-        catch (error) {
-            console.log('fetch content error', error);
+        if (data.length > 0) {
+            // Emit the data to users already connected
+            io.emit('update-content', { data });
+            // Cache the data for users that connect in between fetch
+            // periods
+            memory_cache_1.default.put('content', { data });
         }
     }
-    else {
-        console.log('does not exist');
+    catch (error) {
+        console.log('fetch content error', error);
     }
 };
 exports.fetchContent = fetchContent;
