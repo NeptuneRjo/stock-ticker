@@ -55,43 +55,36 @@ export const fetchContent = async (io: any) => {
 	const lastFriday = await getLastFridayOf(date)
 	const yesterday = await getYesterday(date)
 
-	if (existsSync('./data/symbols.json')) {
-		try {
-			const rawJson = readFileSync('./data/symbols.json')
-			const parsedJson = JSON.parse(rawJson.toString())
+	try {
+		const symbols = ['TSLA', 'BAC', 'AMD', 'F', 'SWN']
 
-			const { symbols } = parsedJson
+		let data: { ticker: string; resultsCount: number; results: [] }[] = []
 
-			let data: { ticker: string; resultsCount: number; results: [] }[] = []
-
-			switch (day) {
-				case 0:
-				case 6: {
-					data = await getData(lastFriday, symbols)
-					break
-				}
-				case 1: {
-					data = await getData(date, symbols, lastFriday)
-					break
-				}
-				default: {
-					data = await getData(date, symbols, yesterday)
-					break
-				}
+		switch (day) {
+			case 0:
+			case 6: {
+				data = await getData(lastFriday, symbols)
+				break
 			}
-
-			if (data.length > 0) {
-				// Emit the data to users already connected
-				io.emit('update-content', { data })
-
-				// Cache the data for users that connect in between fetch
-				// periods
-				cache.put('content', { data })
+			case 1: {
+				data = await getData(date, symbols, lastFriday)
+				break
 			}
-		} catch (error) {
-			console.log('fetch content error', error)
+			default: {
+				data = await getData(date, symbols, yesterday)
+				break
+			}
 		}
-	} else {
-		console.log('does not exist')
+
+		if (data.length > 0) {
+			// Emit the data to users already connected
+			io.emit('update-content', { data })
+
+			// Cache the data for users that connect in between fetch
+			// periods
+			cache.put('content', { data })
+		}
+	} catch (error) {
+		console.log('fetch content error', error)
 	}
 }

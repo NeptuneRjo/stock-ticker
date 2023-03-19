@@ -30,15 +30,15 @@ app.use(
 )
 
 // Run job at 12:00 at EST time
-const scheduledScrape = cron.schedule(
-	'0 12 * * *',
-	() => {
-		scrapeAndUpdate()
-	},
-	{
-		timezone: 'US/Eastern',
-	}
-)
+// const scheduledScrape = cron.schedule(
+// 	'0 12 * * *',
+// 	() => {
+// 		scrapeAndUpdate()
+// 	},
+// 	{
+// 		timezone: 'US/Eastern',
+// 	}
+// )
 
 // Initialize the data on server startup
 if (content === null) {
@@ -53,7 +53,7 @@ const scheduledFetch = cron.schedule('*/2 * * * *', () => {
 // Start the 2 minute schedule
 scheduledFetch.start()
 
-scheduledScrape.start()
+// scheduledScrape.start()
 
 /* <-- ROUTES --> */
 
