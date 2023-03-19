@@ -16,7 +16,7 @@ const content = cache.get('content')
 
 const io = new Server(server, {
 	cors: {
-		origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com/'],
+		origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com'],
 		credentials: true,
 	},
 })
@@ -24,7 +24,7 @@ const io = new Server(server, {
 /* <-- MIDDLEWARE --> */
 app.use(
 	cors({
-		origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com/'],
+		origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com'],
 		credentials: true,
 	})
 )
