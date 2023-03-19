@@ -19,6 +19,7 @@ const io = new socket_io_1.Server(server, {
     cors: {
         origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com'],
         credentials: true,
+        methods: ['GET', 'POST'],
     },
 });
 exports.io = io;
@@ -26,6 +27,7 @@ exports.io = io;
 app.use((0, cors_1.default)({
     origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com'],
     credentials: true,
+    methods: ['GET', 'POST'],
 }));
 // Run job at 12:00 at EST time
 // const scheduledScrape = cron.schedule(
