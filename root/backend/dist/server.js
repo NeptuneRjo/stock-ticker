@@ -18,13 +18,13 @@ const server = http_1.default.createServer(app);
 const content = memory_cache_1.default.get('content');
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com/'],
     },
 });
 exports.io = io;
 /* <-- MIDDLEWARE --> */
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com/'],
 }));
 // Run job at 12:00 at EST time
 const scheduledScrape = node_cron_1.default.schedule('0 12 * * *', () => {
