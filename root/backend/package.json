@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "jest",
+		"start": "node dist/server.js",
 		"build": "tsc -p tsconfig.build.json"
 	},
 	"author": "",
