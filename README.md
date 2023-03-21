@@ -2,6 +2,8 @@
 
 An application that uses SocketIo Websockets to stream the current, high, and low prices of the top 5 stocks. Built with NextJs and Express.
 
+Visit it [here](https://stock-ticker.onrender.com/)
+
 ## Project Demos
 
 ![Demo](./demo.gif)
