@@ -6,6 +6,7 @@ import io, { Socket } from 'socket.io-client'
 import { useState, useEffect, use } from 'react'
 import { StockInterface } from '@/types'
 import Stock from '@/components/Stock'
+import { ScaleLoader } from 'react-spinners'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -75,15 +76,26 @@ export default function Home() {
 						Stock prices are updated regularly, every 2 minutes.
 					</span>
 				</p>
+				<p>
+					<span className={styles.large}>
+						Please be patient with the servers.
+					</span>
+				</p>
 			</div>
 
 			<div className={styles.content}>
 				<h3>{`Today's Top 5`}</h3>
-				<div className={styles.grid}>
-					{stocks.map((stock, index) => (
-						<Stock stock={stock} key={index} />
-					))}
-				</div>
+				{stocks.length === 0 ? (
+					<div className={styles.grid}>
+						<ScaleLoader color='#2da2ec' />
+					</div>
+				) : (
+					<div className={styles.grid}>
+						{stocks.map((stock, index) => (
+							<Stock stock={stock} key={index} />
+						))}
+					</div>
+				)}
 			</div>
 		</>
 	)

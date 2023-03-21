@@ -31,6 +31,12 @@
     font-style: italic;
 }
 
+.large {
+    font-size: var(--fs-s);
+    font-weight: var(--fw-b);
+    font-style: italic;
+}
+
 @media only screen and (min-width: 1600px) {
     .content, .hero {
         margin: var(--spacer-md);
