@@ -1,0 +1,39 @@
+.main {
+    display: flex;
+    padding: var(--spacer);
+    padding-top: var(--spacer-lg);
+    justify-content: space-around;
+}
+
+.title {
+    margin: 0;
+    padding: 0;
+    width: fit-content;
+    font-size: var(--fs-n);
+
+    color: var(--light);
+}
+
+.link {
+    width: fit-content;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    opacity: .8;
+    color: var(--contrast);
+}
+
+.link:hover {
+    opacity: 1;
+}
+
+.link:visited {
+    color: var(--contrast);
+    text-decoration: none;
+}
+
+@media only screen and (min-width: 1600px) {
+    .main {
+        padding: var(--spacer);
+    }
+}

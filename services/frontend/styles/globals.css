@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+:root {
+    --dark: #080d19;
+    --primary: #1d4cb0;
+    --secondary: #2da2ec;
+    --contrast: #bfb8cb;
+
+    --gradient-text: linear-gradient(to right, #1d4cb0, #115dbd, #056dc9, #067dd5, #158ddf, #4595e1, #609de3, #76a5e5, #93a8df, #a7acd8, #b6b1d1, #bfb8cb);
+
+    --ff: 'Roboto', sans-serif;
+
+    /* Font Sizing */
+    --fs-xl: 4em;
+    --fs-l: 3em;
+    --fs-m: 2em;
+    --fs-n: 1em;
+    --fs-s: .8em;
+
+    /* Font Weight */
+    --fw-n: 300;
+    --fw-r: 400;
+    --fw-sb: 600;
+    --fw-b: 900;
+
+    /* -- Spacing -- */
+    --spacer: 1rem;
+    --spacer-md: calc(var(--spacer) * 2);
+    --spacer-lg: calc(var(--spacer) * 3);
+
+    /* -- Misc -- */
+    --shadow: 0 0 1rem rgba(0, 0, 0, .25);
+    --br: 8px;
+}
+
+body {
+    font-family: var(--ff);
+    padding: 0;
+    margin: 0;
+    background-color: var(--dark);
+    color: var(--contrast);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 95%;
+    max-width: 28ch;
+}
+
+p {
+    line-height: 42px;
+    max-width: 52ch;
+    font-size: var(--fs-s);
+}
+
+h1 {
+    font-size: var(--fs-xl);
+}
+
+h3 {
+    font-size: var(--fs-l);
+}
+
+h4 {
+    font-size: var(--fs-m);
+}
+
+h5 {
+    font-size: var(--fs-n);
+}
+
+a {
+    font-size: var(--fs-s);
+}
+
+
+@media only screen and (min-width: 600px) {
+    :root {
+        --spacer: 1.5rem;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    :root {
+        /* Font-size */
+        --fs-xl: 4.5em;
+        --fs-l: 3.5em;
+        --fs-m: 2.5em;
+        --fs-n: 1.5em;
+        --fs-s: 1em;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    :root {
+        --spacer: 2rem;
+    }
+} 
+
+@media only screen and (min-width: 1200px) {
+    :root {
+        --spacer: 2.25rem;
+
+        /* Font-size */
+        --fs-xl: 4.75em;
+        --fs-l: 3.75em;
+        --fs-m: 2.75em;
+        --fs-n: 1.75em;
+        --fs-s: 1.2em;
+    }
+
+    p {
+        max-width: 64ch;
+
+    }
+}
+
+@media only screen and (min-width: 1600px) {
+    :root {
+        --spacer: 5rem;
+
+        --fs-s: 1.5rem;
+    }
+
+    p {
+        max-width: 64ch;
+    }
+}
