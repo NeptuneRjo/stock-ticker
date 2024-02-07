@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  websocket:
+    build: ./services/websocket
+    container_name: websocket_container
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./services/websocket:/app
+      - /app/node_modules
+  scraper:
+    build: ./services/scraper
+    container_name: scraper_container
+    volumes:
+      - ./services/scraper:/app
+      - /app/node_modules
+  frontend:
+    build: ./services/frontend
+    container_name: frontend_container
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
