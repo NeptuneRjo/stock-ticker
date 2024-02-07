@@ -57,9 +57,7 @@ scheduledFetch.start()
 
 // scheduledScrape.start()
 
-/* <-- ROUTES --> */
-
-const port = 8000 || process.env.PORT
+const port = process.env.PORT || 8000
 
 io.on('connection', (socket) => {
 	socket.on('initialize', () => {
