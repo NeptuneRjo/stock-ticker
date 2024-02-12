@@ -19,6 +19,7 @@
     "puppeteer": "^22.0.0"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.35",
     "@types/node": "^20.11.16",
     "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.11.0",
