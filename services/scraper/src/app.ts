@@ -1,7 +1,7 @@
 import cron from 'node-cron'
 import puppeteer from 'puppeteer'
 import cheerio from 'cheerio'
-import './data/initializePostgres'
+import client from './data/initializePostgres'
 
 type Stock = {
     symbol: string,
@@ -16,12 +16,14 @@ type Stock = {
 const app = async () => {
     const stockHtmlElements: string[] = await scrapeStocks()
     const stocks: Stock[] = await parseStockHtmlElements(stockHtmlElements)
+
+    await fillDatabaseWithStocks(stocks)
 }
 app()
 
-
 async function scrapeStocks (): Promise<string[]> {
     try {
+        const startTime = performance.now()
         const browser = await puppeteer.launch()
         const page = await browser.newPage()
 
@@ -40,6 +42,11 @@ async function scrapeStocks (): Promise<string[]> {
         })
 
         await browser.close()
+        
+        const endTime = performance.now()
+
+        console.log(`Scraping time in seconds: ${Math.round((endTime - startTime) / 1000)}` )
+
         return tableRows
     } catch (error) {
         console.error(error)
@@ -48,6 +55,7 @@ async function scrapeStocks (): Promise<string[]> {
 }
 
 async function parseStockHtmlElements(htmlElements: string[]): Promise<Stock[]> {
+    const startTime = performance.now()
     const parsedElements: Stock[] = []
     
     htmlElements.forEach((element, index) => {
@@ -60,7 +68,6 @@ async function parseStockHtmlElements(htmlElements: string[]): Promise<Stock[]> 
         const change_percent = $(element).find('td').eq(4).find('fin-streamer').text()
         const volume = $(element).find('td').eq(5).find('fin-streamer').text()
         const market_cap = $(element).find('td').eq(7).find('fin-streamer').text()
-
 
         const stock: Stock = {
             symbol,
@@ -75,5 +82,34 @@ async function parseStockHtmlElements(htmlElements: string[]): Promise<Stock[]> 
         parsedElements.push(stock)
     })
 
+    const endTime = performance.now()
+
+    console.log(`Parse time in seconds: ${Math.round((endTime - startTime) / 1000)}`)
+
     return parsedElements
+}
+
+async function fillDatabaseWithStocks(stocks: Stock[]) {
+    const startTime = performance.now()
+
+    // Clears the stocks table
+    await client.query('TRUNCATE TABLE stocks')
+
+    try {
+        stocks.forEach(async (stock, index) => {
+            const query = {
+                text: 'INSERT INTO stocks (symbol, name, last_price, change, change_percent, volume, market_cap) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                values: [stock.symbol, stock.name, stock.last_price, stock.change, stock.change_percent, stock.volume, stock.market_cap]
+            }
+
+            await client.query(query)
+        })
+
+        const endTime = performance.now()
+
+        console.log(`Fill database time in seconds: ${Math.round((endTime - startTime) / 1000)}`)
+    } catch (error) {
+        console.error(error)
+        throw new Error()
+    }
 }
