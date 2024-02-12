@@ -1,23 +1,46 @@
 version: '3.8'
 services:
   websocket:
-    build: ./services/websocket
+    build:
+      context: ./services/websocket
+      dockerfile: Dockerfile
     container_name: websocket_container
     ports:
-      - '4000:4000'
+      - '8000:8000'
     volumes:
-      - ./services/websocket:/app
-      - /app/node_modules
+      - ./services/websocket:/websocket
+      - ./services/websocket/nodemon.json:/websocket/nodemon.json
+      - /websocket/node_modules
+    depends_on:
+      - database
+
   scraper:
     build: ./services/scraper
     container_name: scraper_container
+    ports:
+      - '4000:4000'
     volumes:
-      - ./services/scraper:/app
-      - /app/node_modules
+      - ./services/scraper:/scraper
+      - /scraper/node_modules
+    depends_on:
+      - database
+    cap_add:
+      - SYS_ADMIN
+
   frontend:
-    build: ./services/frontend
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
     container_name: frontend_container
     ports:
       - '3000:3000'
     stdin_open: true
     tty: true
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: database_container
+    ports:
+      - '5432:5432'
