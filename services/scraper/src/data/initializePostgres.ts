@@ -2,8 +2,8 @@ import { Client } from 'pg'
 
 const client = new Client()
 
-client.connect().then(() => {
-    setupStockTable()
+client.connect().then(async () => {
+    await setupStockTable()
 })
 
 async function setupStockTable () {
