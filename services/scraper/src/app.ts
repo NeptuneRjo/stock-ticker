@@ -54,33 +54,33 @@ async function scrapeStocks (): Promise<string[]> {
     }
 }
 
+const createStockFromElement = (element: string): Stock => {
+    const $ = cheerio.load(element)
+
+    const symbol = $(element).find('a').text()
+    const name = $(element).find('td').eq(1).text()
+    const last_price = $(element).find('td').eq(2).find('fin-streamer').text()
+    const change = $(element).find('td').eq(3).find('fin-streamer').text()
+    const change_percent = $(element).find('td').eq(4).find('fin-streamer').text()
+    const volume = $(element).find('td').eq(5).find('fin-streamer').text()
+    const market_cap = $(element).find('td').eq(7).find('fin-streamer').text()
+
+    return {
+        symbol,
+        name,
+        last_price: Number(last_price),
+        change,
+        change_percent,
+        volume,
+        market_cap
+    }
+}
+
 async function parseStockHtmlElements(htmlElements: string[]): Promise<Stock[]> {
-    const startTime = performance.now()
     const parsedElements: Stock[] = []
+    const startTime = performance.now()
     
-    htmlElements.forEach((element, index) => {
-        const $ = cheerio.load(element)
-
-        const symbol = $(element).find('a').text()
-        const name = $(element).find('td').eq(1).text()
-        const last_price = $(element).find('td').eq(2).find('fin-streamer').text()
-        const change = $(element).find('td').eq(3).find('fin-streamer').text()
-        const change_percent = $(element).find('td').eq(4).find('fin-streamer').text()
-        const volume = $(element).find('td').eq(5).find('fin-streamer').text()
-        const market_cap = $(element).find('td').eq(7).find('fin-streamer').text()
-
-        const stock: Stock = {
-            symbol,
-            name,
-            last_price: Number(last_price),
-            change,
-            change_percent,
-            volume,
-            market_cap
-        }
-
-        parsedElements.push(stock)
-    })
+    htmlElements.forEach((element) => parsedElements.push(createStockFromElement(element)))
 
     const endTime = performance.now()
 
@@ -89,20 +89,24 @@ async function parseStockHtmlElements(htmlElements: string[]): Promise<Stock[]> 
     return parsedElements
 }
 
+const addStockToDatabase = async (stock: Stock) => {
+    const query = {
+        text: 'INSERT INTO stocks (symbol, name, last_price, change, change_percent, volume, market_cap) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        values: [stock.symbol, stock.name, stock.last_price, stock.change, stock.change_percent, stock.volume, stock.market_cap]
+    }
+
+    await client.query(query)
+}
+
 async function fillDatabaseWithStocks(stocks: Stock[]) {
     const startTime = performance.now()
 
     // Clears the stocks table
-    await client.query('TRUNCATE TABLE stocks')
+    await client.query('TRUNCATE TABLE stocks CASCADE')
 
     try {
         stocks.forEach(async (stock, index) => {
-            const query = {
-                text: 'INSERT INTO stocks (symbol, name, last_price, change, change_percent, volume, market_cap) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-                values: [stock.symbol, stock.name, stock.last_price, stock.change, stock.change_percent, stock.volume, stock.market_cap]
-            }
-
-            await client.query(query)
+            await addStockToDatabase(stock)
         })
 
         const endTime = performance.now()
