@@ -1,22 +1,18 @@
 import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
-// import { scrapeAndUpdate } from './global/scraper'
-import { fetchContent } from './global/api'
-import cron from 'node-cron'
 import cache from 'memory-cache'
 import cors from 'cors'
+import { Client } from 'pg'
 
 import 'dotenv/config'
 
 const app = express()
 const server = http.createServer(app)
 
-const content = cache.get('content')
-
 const io = new Server(server, {
 	cors: {
-		origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com'],
+		origin: ['http://localhost:3000', 'http://frontend_container:3000'],
 		credentials: true,
 		methods: ['GET', 'POST'],
 	},
@@ -25,37 +21,11 @@ const io = new Server(server, {
 /* <-- MIDDLEWARE --> */
 app.use(
 	cors({
-		origin: ['http://localhost:3000', 'https://stock-ticker.onrender.com'],
+		origin: ['http://localhost:3000', 'http://localhost:4000', 'http://frontend_container:3000'],
 		credentials: true,
 		methods: ['GET', 'POST'],
 	})
 )
-
-// Run job at 12:00 at EST time
-// const scheduledScrape = cron.schedule(
-// 	'0 12 * * *',
-// 	() => {
-// 		scrapeAndUpdate()
-// 	},
-// 	{
-// 		timezone: 'US/Eastern',
-// 	}
-// )
-
-// Initialize the data on server startup
-if (content === null) {
-	fetchContent(io)
-}
-
-// Fetch the content every 2 minutes
-const scheduledFetch = cron.schedule('*/2 * * * *', () => {
-	fetchContent(io)
-})
-
-// Start the 2 minute schedule
-scheduledFetch.start()
-
-// scheduledScrape.start()
 
 const port = process.env.PORT || 8000
 
@@ -73,7 +43,26 @@ io.on('connection', (socket) => {
 	})
 })
 
-app.get("/", (req, res) => res.json({"message": "hello world"}))
+const client = new Client()
+
+app.get('/', (req, res) => console.log("Hello world"))
+
+app.get("/emitt-event", async (req: express.Request, res: express.Response) => {
+	try {
+		await client.connect()
+	
+		const results = await client.query('SELECT * FROM stocks')
+
+		if (results.rows !== null) {
+			cache.put('content', results.rows)
+			io.emit('content', { data: results.rows })
+		}
+
+		await client.end()
+	} catch (error) {
+		console.error(error)
+	}
+})
 
 server.listen(port, () => {
 	console.log(`Server sucessfully started and listening on port ${port}`)
