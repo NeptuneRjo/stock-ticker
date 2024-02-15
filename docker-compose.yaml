@@ -1,5 +1,26 @@
 version: '3.8'
 services:
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: database_container
+    ports:
+      - '5432:5432'
+
+  scraper:
+    build: ./services/scraper
+    container_name: scraper_container
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./services/scraper:/scraper
+      - /scraper/node_modules
+    cap_add:
+      - SYS_ADMIN
+    depends_on:
+      - database
+
   websocket:
     build:
       context: ./services/websocket
@@ -13,19 +34,7 @@ services:
       - /websocket/node_modules
     depends_on:
       - database
-
-  scraper:
-    build: ./services/scraper
-    container_name: scraper_container
-    ports:
-      - '4000:4000'
-    volumes:
-      - ./services/scraper:/scraper
-      - /scraper/node_modules
-    depends_on:
-      - database
-    cap_add:
-      - SYS_ADMIN
+      - scraper
 
   frontend:
     build:
@@ -36,11 +45,7 @@ services:
       - '3000:3000'
     stdin_open: true
     tty: true
-
-  database:
-    build:
-      context: ./database
-      dockerfile: Dockerfile
-    container_name: database_container
-    ports:
-      - '5432:5432'
+    depends_on:
+      - websocket
+      - scraper
+      - database
