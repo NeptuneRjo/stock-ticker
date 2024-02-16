@@ -33,12 +33,12 @@ function App() {
 
   return (
     <div className="app">
-      <div>
-        <h1>Home</h1>
+      <div className='hero'>
+        <h1 className='title'>Home</h1>
         <p>
           Displays the prices of 100 of the current most active stocks
           <br />
-          <span>
+          <span className='small'>
             Stock prices are updated every minute.
           </span>
         </p>
