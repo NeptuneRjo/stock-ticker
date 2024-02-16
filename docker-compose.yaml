@@ -2,7 +2,7 @@ version: '3.8'
 services:
   database:
     build:
-      context: ./database
+      context: ./services/database
       dockerfile: Dockerfile
     container_name: database_container
     ports:
