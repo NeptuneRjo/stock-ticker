@@ -1,68 +1,62 @@
 import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
-import cache from 'memory-cache'
 import cors from 'cors'
-import { Client } from 'pg'
-
-import 'dotenv/config'
+import cron from 'node-cron'
+import { Stock } from './types'
+import { parseStockHtmlElements } from './scraper/htmlParsing'
+import { fillDatabaseWithStocks } from './data/addStocks'
+import { scrapeStocks } from './scraper/scraper'
+import client from './data/initializePostgres'
 
 const app = express()
 const server = http.createServer(app)
 
+const corsOptions = {
+	origin: ['http://localhost:3000', 'http://frontend_container:3000'],
+	credentials: true,
+	methods: ['GET', 'POST'],
+}
+
 const io = new Server(server, {
-	cors: {
-		origin: ['http://localhost:3000', 'http://frontend_container:3000'],
-		credentials: true,
-		methods: ['GET', 'POST'],
-	},
+	cors: corsOptions,
 })
 
 /* <-- MIDDLEWARE --> */
-app.use(
-	cors({
-		origin: ['http://localhost:3000', 'http://localhost:4000', 'http://frontend_container:3000'],
-		credentials: true,
-		methods: ['GET', 'POST'],
-	})
-)
+app.use(cors(corsOptions))
 
 const port = process.env.PORT || 8000
 
 io.on('connection', (socket) => {
-	socket.on('initialize', () => {
-		const content = cache.get('content')
-
-		if (content !== null) {
-			socket.volatile.emit('content', { data: content })
-		}
+	// **:**:client/server denotes the recipient
+	socket.on('initialize:content:server', async () => {
+		const query = 'SELECT * FROM stocks'
+		const results = await client.query(query)
+		
+		socket.emit('initialize:content:client', results.rows)
 	})
-
+	
 	socket.on('disconnect', () => {
 		console.log('user disconnected')
 	})
 })
 
-const client = new Client()
-
-app.get('/', (req, res) => console.log("Hello world"))
-
-app.get("/emitt-event", async (req: express.Request, res: express.Response) => {
-	try {
-		await client.connect()
+const updateClients = async () => {
+	const query = 'SELECT * FROM stocks'
+	const results = await client.query(query)
 	
-		const results = await client.query('SELECT * FROM stocks')
+	io.emit('update:content:client', results.rows)
+}
 
-		if (results.rows !== null) {
-			cache.put('content', results.rows)
-			io.emit('content', { data: results.rows })
-		}
+// 1-minute intervals
+const scrapeTask = cron.schedule('* */1 * * *', async () => {
+	const stockHtmlElements: string[] = await scrapeStocks()
+	const stocks: Stock[] = await parseStockHtmlElements(stockHtmlElements)
 
-		await client.end()
-	} catch (error) {
-		console.error(error)
-	}
+	await fillDatabaseWithStocks(stocks)
+	await updateClients()
 })
+scrapeTask.start()
 
 server.listen(port, () => {
 	console.log(`Server sucessfully started and listening on port ${port}`)
