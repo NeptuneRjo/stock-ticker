@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  database:
+    build:
+      context: ./services/database
+      dockerfile: Dockerfile
+    container_name: database_container
+    ports:
+      - '5432:5432'
+
+  websocket:
+    build:
+      context: ./services/websocket
+      dockerfile: Dockerfile
+    container_name: websocket_container
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./services/websocket:/websocket
+      - ./services/websocket/nodemon.json:/websocket/nodemon.json
+      - /websocket/node_modules
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+    container_name: frontend_container
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - websocket
+      - database

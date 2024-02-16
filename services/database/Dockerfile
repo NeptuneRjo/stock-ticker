@@ -1,0 +1,8 @@
+FROM postgres:16.1-alpine
+
+WORKDIR /database
+
+ENV POSTGRES_PASSWORD=password
+ENV POSTGRES_USER=admin
+
+EXPOSE 5432

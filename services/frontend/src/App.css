@@ -1,0 +1,38 @@
+.hero {
+    display: flex;
+    flex-direction: column;
+    margin: var(--spacer);
+    margin-bottom: var(--spacer-lg);
+}
+
+.title {
+    background: var(--gradient-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+table {
+    width: 100%;
+    padding: 0 var(--spacer);
+}
+
+td {
+    padding: 8px;
+    border: solid 1px var(--contrast);
+}
+
+th {
+    padding: 8px 4px;
+    text-align: left;
+    background-color: var(--primary);
+    color: var(--contrast);
+}
+
+@media only screen and (min-width: 1600px) {
+
+    .content,
+    .hero {
+        margin: var(--spacer-md);
+    }
+}
