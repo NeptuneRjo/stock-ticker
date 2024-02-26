@@ -13,14 +13,14 @@ const pool = new Pool()
  *  const params = ['New Title', 'Hello World!']
 
  */
-export const query = async (text: string, params: any[] | null = null) => {
+export const query = async (text: string, params: any[] = []) => {
     // Logs queries from everywhere in the application
     // https://node-postgres.com/guides/project-structure
     const startTime = performance.now()
     const res = await pool.query(text, params)
     const duration = Math.round((performance.now() - startTime) / 1000)
 
-    console.log('executed query', { text, duration, rows: res.rowCount })    
+    // console.log('executed query', { text, duration, rows: res.rowCount })    
 
     return res
 }
