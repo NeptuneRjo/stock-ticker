@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import { Stock } from '../types'
 
-const createStockFromElement = (element: string): Stock => {
+export const createStockFromElement = (element: string): Stock => {
     const $ = cheerio.load(element)
 
     const symbol = $(element).find('a').text()
@@ -23,11 +23,25 @@ const createStockFromElement = (element: string): Stock => {
     }
 }
 
-export async function parseStockHtmlElements(htmlElements: string[]): Promise<Stock[]> {
+export function pullRowsFromStockTable(stockTable: string): string[] {
+    const rows: string[] = []
+    const $ = cheerio.load(stockTable)
+    
+    $(stockTable).find('tr.simpTblRow').each((index: number, element: any) => {
+        rows.push($.html(element))
+    })
+
+    return rows
+}
+
+export async function parseStockRowElements(rowElements: string[]): Promise<Stock[]> {
     const parsedElements: Stock[] = []
     const startTime = performance.now()
     
-    htmlElements.forEach((element) => parsedElements.push(createStockFromElement(element)))
+    rowElements.forEach((element) => {
+        const stock = createStockFromElement(element)
+        parsedElements.push(stock)
+    })
 
     const endTime = performance.now()
 
