@@ -7,3 +7,9 @@ export type Stock = {
     volume: string,
     market_cap: string
 }
+
+export type StockHistory = {
+    price: number, 
+    price_timestamp: Date, // node-pg will parse timestamp to Date
+    
+}
