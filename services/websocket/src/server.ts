@@ -57,6 +57,11 @@ scrapeTask.start()
 
 server.listen(port, async () => {
 	console.log(`Server sucessfully started and listening on port ${port}`)
+
+	// Create tables if they dont already exist
+	await query.setupStockTable()
+	await query.setupStockHistoryTable()
+
 	await scrapeAndUpdateDb()
 })
 
