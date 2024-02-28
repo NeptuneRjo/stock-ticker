@@ -45,22 +45,31 @@ const updateClients = async () => {
 
 // 1-minute intervals
 const scrapeTask = cron.schedule('* */1 * * *', async () => {
-	const stocks = await scraper.scrapeAndProcessData()
-	
-	await query.updateStocksInDatabase(stocks)
-	await updateClients()
+	// Source: https://stackoverflow.com/a/64264859
+	const marketOpen = 14 * 60 + 30 // minutes
+	const marketClosed = 21 * 60 // minutes
+	let now = new Date()
+	let currentTime = now.getUTCHours() * 60 + now.getUTCMinutes() // Minutes since Midnight
+
+	if(currentTime > marketOpen && currentTime < marketClosed) { 
+		const stocks = await scraper.scrapeAndProcessData()
+		
+		await query.updateStocksInDatabase(stocks)
+		await updateClients()
+	}
 })
-scrapeTask.start()
 
 server.listen(port, async () => {
 	console.log(`Server sucessfully started and listening on port ${port}`)
-
+	
 	// Create tables if they dont already exist
 	await query.setupStockTable()
 	await query.setupStockHistoryTable()
-
+	
 	// Scrape the stocks and initialize the data in the table
 	const stocks = await scraper.scrapeAndProcessData()
 	await query.addStocksToDatabase(stocks)
+	
+	scrapeTask.start()
 })
 
