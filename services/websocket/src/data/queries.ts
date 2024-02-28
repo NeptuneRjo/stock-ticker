@@ -16,7 +16,7 @@ export const updateStocksInDatabase = async (stocks: Stock[]) => {
             // Or if they're over 24 hours old
             const cleanStockHistory = `
                 DELETE FROM stock_history
-                WHERE stock_symbol NOT IN (SELECT symbol FROM stocks)
+                WHERE symbol NOT IN (SELECT symbol FROM stocks)
                 OR price_timestamp < 
                 CURRENT_TIMESTAMP - INTERVAL '24 hours'
             `
@@ -77,7 +77,7 @@ export const setupStockHistoryTable = async () => {
             stock_history_id SERIAL PRIMARY KEY,
             price NUMERIC NOT NULL,
             price_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            stock_symbol VARCHAR(32) NOT NULL
+            symbol VARCHAR(32) NOT NULL
         )
     `
         
@@ -85,7 +85,13 @@ export const setupStockHistoryTable = async () => {
 }
         
 export const getStocksFromDatabase = async (): Promise<any[]> => {
-    const text = `SELECT * FROM stocks`
+    // Returns the stocks with an array of objects containing the price and its timestamp
+    const text = `
+        SELECT s.*, json_agg(json_build_object('price', sh.price, 'timestamp', sh.price_timestamp)) AS history
+        FROM stocks s
+        LEFT JOIN stock_history sh ON s.symbol = sh.symbol
+        GROUP BY s.stock_id
+    `
     const results = await db.query(text)
     
     return results.rows
@@ -93,7 +99,7 @@ export const getStocksFromDatabase = async (): Promise<any[]> => {
 
 async function addStockHistory (last_price: number, symbol: string) {
     const query = `
-        INSERT INTO stock_history (price, stock_symbol)
+        INSERT INTO stock_history (price, symbol)
         VALUES ($1, $2)
     `
     const values = [
