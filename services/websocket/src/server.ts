@@ -43,14 +43,11 @@ const updateClients = async () => {
 	io.emit('update:content:client', results)
 }
 
-const scrapeAndUpdateDb = async () => {
-	const stocks = await scraper.scrapeAndProcessData()
-	await query.addStocksToDatabase(stocks)
-}
-
 // 1-minute intervals
 const scrapeTask = cron.schedule('* */1 * * *', async () => {
-	await scrapeAndUpdateDb()
+	const stocks = await scraper.scrapeAndProcessData()
+	
+	await query.updateStocksInDatabase(stocks)
 	await updateClients()
 })
 scrapeTask.start()
@@ -62,6 +59,8 @@ server.listen(port, async () => {
 	await query.setupStockTable()
 	await query.setupStockHistoryTable()
 
-	await scrapeAndUpdateDb()
+	// Scrape the stocks and initialize the data in the table
+	const stocks = await scraper.scrapeAndProcessData()
+	await query.addStocksToDatabase(stocks)
 })
 
