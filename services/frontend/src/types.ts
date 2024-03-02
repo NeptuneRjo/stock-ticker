@@ -5,5 +5,9 @@ export type Stock = {
     change: string,
     change_percent: string,
     volume: string,
-    market_cap: string
+    market_cap: string,
+    history: {
+        price: number,
+        timestamp: Date
+    }[]
 }
