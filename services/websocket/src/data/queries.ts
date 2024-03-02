@@ -87,7 +87,15 @@ export const setupStockHistoryTable = async () => {
 export const getStocksFromDatabase = async (): Promise<any[]> => {
     // Returns the stocks with an array of objects containing the price and its timestamp
     const text = `
-        SELECT s.*, json_agg(json_build_object('price', sh.price, 'timestamp', sh.price_timestamp)) AS history
+        SELECT 
+            s.symbol, 
+            s.name, 
+            s.last_price, 
+            s.change, 
+            s.change_percent, 
+            s.volume, 
+            s.market_cap, 
+            json_agg(json_build_object('price', sh.price, 'timestamp', sh.price_timestamp)) AS history
         FROM stocks s
         LEFT JOIN stock_history sh ON s.symbol = sh.symbol
         GROUP BY s.stock_id
