@@ -2,12 +2,18 @@ import React from 'react';
 import './App.css';
 import { Stock } from './types';
 import io, { Socket } from 'socket.io-client'
+import { StockChart } from './components'
+import { applyCountToArray } from './utilities/pagination'
+import ReactPaginate from 'react-paginate';
 
 function App() {
   const endpoint = process.env.REACT_APP_WEBSOCKET_ENDPOINT
   const socket: Socket = io(endpoint as string)
   
   const [stocks, setStocks] = React.useState<Stock[]>([])
+
+  const [offset, setOffset] = React.useState<number>(0)
+  const [count, setCount] = React.useState<number>(24)
 
   React.useEffect(() => {
     socket.connect()
@@ -31,46 +37,44 @@ function App() {
     }
   }, [])
 
+  const displayStocks = applyCountToArray(stocks, count)
+
   return (
     <div className="app">
       <div className='hero'>
-        <h1 className='title'>Home</h1>
+        <h1 className='title'>Market Watch</h1>
         <p>
-          Displays the prices of 100 of the current most active stocks
+          Displays the prices of the {stocks.length} most active stocks
           <br />
-          <span className='small'>
-            Stock prices are updated every minute.
-          </span>
+          Stock prices are updated every minute.
         </p>
       </div>
       {stocks.length === 0 ? (
         <div className='loader'>Loading...</div>
       ) : (
-        <table>
-          <tr>
-            <th>Symbol</th>
-            <th>Name</th>
-            <th>Last Price (USD)</th>
-            <th>Change</th>
-            <th>Percent Change</th>
-            <th>Volume</th>
-            <th>Market Cap</th>
-          </tr>
-          {stocks.map((stock: Stock, key: number) => (
-              <tr key={key}>
-                <td>{stock.symbol}</td>
-                <td>{stock.name}</td>
-                <td>{stock.last_price}</td>
-                <td>{stock.change}</td>
-                <td>{stock.change_percent}</td>
-                <td>{stock.volume}</td>
-                <td>{stock.market_cap}</td>
-              </tr>
-          ))}
-        </table>
+        <div className='content'>
+          <div className='controls'>
+            <ReactPaginate 
+              breakLabel="..." 
+              nextLabel=">" 
+              onPageChange={({ selected }) => setOffset(selected)}
+              pageRangeDisplayed={displayStocks.length}
+              pageCount={displayStocks.length}
+              previousLabel="<"
+              renderOnZeroPageCount={null}
+              containerClassName='paginate'
+              activeClassName='paginate-active'
+            />
+          </div>
+          <div className="grid">
+            {displayStocks[offset].map((stock, key) => (
+              <StockChart stock={stock} key={key} />
+            ))}
+          </div>
+        </div>
       )}
     </div>
-  );
+  )
 }
 
 export default App;
