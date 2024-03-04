@@ -49,11 +49,18 @@ function App() {
           Stock prices are updated every minute.
         </p>
       </div>
-      {stocks.length === 0 ? (
+      {(stocks.length === 0 && displayStocks.length === 0) ? (
         <div className='loader'>Loading...</div>
       ) : (
         <div className='content'>
           <div className='controls'>
+            <select className="offset" onChange={({ target }) => setCount(Number(target.value))}>
+              <option value={24}>Show 24 stocks</option>
+              <option value={48}>Show 48 stocks</option>
+              <option value={96}>Show 96 stocks</option>
+              <option value={192}>Show 192 stocks</option>
+              <option value={stocks.length}>Show all stocks</option>
+            </select>
             <ReactPaginate 
               breakLabel="..." 
               nextLabel=">" 
