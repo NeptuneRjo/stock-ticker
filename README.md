@@ -31,7 +31,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/NeptuneRjo/stock-ticker">
-    <img src="images/demo.gif" alt="Logo" width="80" height="80">
+    <img src="images/demo.gif" alt="Logo">
   </a>
 
 <h3 align="center">Market Watch</h3>
