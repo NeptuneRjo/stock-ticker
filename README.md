@@ -31,13 +31,13 @@
 <br />
 <div align="center">
   <a href="https://github.com/NeptuneRjo/stock-ticker">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/demo.gif" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Market Watch</h3>
 
   <p align="center">
-    Live feed of the top 100 most active stocks
+    Live feed of the current most active stocks. Maintains the price history for the market day.
     <br />
     <br />
     <br />
