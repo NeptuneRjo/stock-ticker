@@ -31,7 +31,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/NeptuneRjo/stock-ticker">
-    <img src="images/demo.gif" alt="Logo">
+    <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Market Watch</h3>
@@ -151,7 +151,7 @@ Docker Desktop download https://www.docker.com/products/docker-desktop/
 [license-url]: https://github.com/NeptuneRjo/stock-ticker/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: images/demo.gif
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
