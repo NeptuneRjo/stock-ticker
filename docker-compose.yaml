@@ -8,6 +8,20 @@ services:
     ports:
       - '5432:5432'
 
+  scraper:
+    build:
+      context: ./services/scraper
+      dockerfile: Dockerfile
+    container_name: scraper_container
+    ports:
+      - '6000:6000'
+    volumes:
+      - ./services/scraper:/scraper
+      - ./services/scraper/nodemon.json:/scraper/nodemon.json
+      - /scraper/node_modules
+    depends_on:
+      - database
+
   websocket:
     build:
       context: ./services/websocket
@@ -21,6 +35,7 @@ services:
       - /websocket/node_modules
     depends_on:
       - database
+      - scraper
 
   frontend:
     build:
