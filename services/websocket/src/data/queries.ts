@@ -129,6 +129,7 @@ async function addStock (stock: Stock) {
             market_cap
         ) 
         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (symbol) DO NOTHING
     `
     const values = [
         stock.symbol, 
