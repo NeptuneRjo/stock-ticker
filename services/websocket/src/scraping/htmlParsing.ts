@@ -36,16 +36,11 @@ export function pullRowsFromStockTable(stockTable: string): string[] {
 
 export async function parseStockRowElements(rowElements: string[]): Promise<Stock[]> {
     const parsedElements: Stock[] = []
-    const startTime = performance.now()
     
     rowElements.forEach((element) => {
         const stock = createStockFromElement(element)
         parsedElements.push(stock)
     })
-
-    const endTime = performance.now()
-
-    console.log(`Parse time in seconds: ${Math.round((endTime - startTime) / 1000)}`)
 
     return parsedElements
 }
