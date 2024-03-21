@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import cors from 'cors'
@@ -10,7 +10,10 @@ const app = express()
 const server = http.createServer(app)
 
 const corsOptions = {
-	origin: ['http://localhost:3000', 'http://frontend_container:3000'],
+	origin: [
+		'http://localhost:3000', 
+		'http://frontend_container:3000', 
+	],
 	credentials: true,
 	methods: ['GET', 'POST'],
 }
